@@ -1,16 +1,14 @@
+from collections import namedtuple
+import re
+from bs4 import BeautifulSoup
+from selenium.webdriver import ChromeService, ChromeOptions, Chrome
+from selenium.common.exceptions import WebDriverException
 import time
 import sys
 from csv import writer
 import logging
 from dotenv import load_dotenv
 from os import getenv
-from collections import namedtuple
-import re
-from bs4 import BeautifulSoup
-from selenium.webdriver import ChromeService, ChromeOptions, Chrome
-from selenium.common.exceptions import WebDriverException
-
-
 
 RealtorData = namedtuple(
     "RealtorData", ["name", "role", "company", "address", "number"]
@@ -174,7 +172,7 @@ def render_page(driver, url):
 def scrape_pages(driver, filename, pages_to_scrape=DEFAULT_PAGES_TO_SCRAPE):
     for batch_start in range(1, pages_to_scrape + 1, BATCH_SIZE):
         # Choose where the batch ends
-        # pages_to_scrape + 1 will be the batch_end, once we reach the end of all pages to scrape 
+        # pages_to_scrape + 1 will be the batch_end, once we reach the end of all pages to scrape
         batch_end = min(batch_start + BATCH_SIZE, pages_to_scrape + 1)
         data_from_pages = []
 
@@ -188,7 +186,6 @@ def scrape_pages(driver, filename, pages_to_scrape=DEFAULT_PAGES_TO_SCRAPE):
         LOGGER.info(f"Writing batch for pages {batch_start} to {batch_end - 1}")
         write_to_csv(filename, data_from_pages)
         LOGGER.info("Wrote batch above to CSV")
-
 
 
 def main():
