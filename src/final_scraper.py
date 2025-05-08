@@ -171,24 +171,21 @@ def render_page(driver, url):
 
 
 def scrape_pages(driver, filename, pages_to_scrape=DEFAULT_PAGES_TO_SCRAPE):
-    try:
-        for batch_start in range(1, pages_to_scrape + 1, BATCH_SIZE):
-            batch_end = min(batch_start + BATCH_SIZE, pages_to_scrape + 1)
-            data_from_pages = []
+    for batch_start in range(1, pages_to_scrape + 1, BATCH_SIZE):
+        batch_end = min(batch_start + BATCH_SIZE, pages_to_scrape + 1)
+        data_from_pages = []
 
-            for page_num in range(batch_start, batch_end):
-                url = URL + str(page_num)
-                LOGGER.info(f"Rendering url: {url}")
+        for page_num in range(batch_start, batch_end):
+            url = URL + str(page_num)
+            LOGGER.info(f"Rendering url: {url}")
 
-                page_data = render_page(driver, url)
-                data_from_pages.append(page_data)
+            page_data = render_page(driver, url)
+            data_from_pages.append(page_data)
 
-            LOGGER.info(f"Writing batch for pages {batch_start} to {batch_end - 1}")
-            write_to_csv(filename, data_from_pages)
-            LOGGER.info("Wrote batch above to CSV")
+        LOGGER.info(f"Writing batch for pages {batch_start} to {batch_end - 1}")
+        write_to_csv(filename, data_from_pages)
+        LOGGER.info("Wrote batch above to CSV")
 
-    except (WebDriverException, Exception) as e:
-        LOGGER.critical(f"An CRITICAL error occured while scraping: {e}")
 
 
 def main():
