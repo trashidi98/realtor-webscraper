@@ -1,14 +1,15 @@
-from collections import namedtuple
-import re
-from bs4 import BeautifulSoup
-from selenium.webdriver import ChromeService, ChromeOptions, Chrome
-from selenium.common.exceptions import WebDriverException
 import time
 import sys
 from csv import writer
 import logging
 from dotenv import load_dotenv
 from os import getenv
+from collections import namedtuple
+import re
+from bs4 import BeautifulSoup
+from selenium.webdriver import ChromeService, ChromeOptions, Chrome
+from selenium.common.exceptions import WebDriverException
+
 
 
 RealtorData = namedtuple(
