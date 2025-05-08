@@ -29,6 +29,7 @@ LOGGER.addHandler(STD_OUT_LOGGER)
 
 load_dotenv()
 URL = getenv("WEBSITE_URL")
+assert isinstance(URL, str)
 
 
 def provision_webdriver():
