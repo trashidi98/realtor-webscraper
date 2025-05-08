@@ -172,6 +172,8 @@ def render_page(driver, url):
 
 def scrape_pages(driver, filename, pages_to_scrape=DEFAULT_PAGES_TO_SCRAPE):
     for batch_start in range(1, pages_to_scrape + 1, BATCH_SIZE):
+        # Choose where the batch ends
+        # pages_to_scrape + 1 will be the batch_end, once we reach the end of all pages to scrape 
         batch_end = min(batch_start + BATCH_SIZE, pages_to_scrape + 1)
         data_from_pages = []
 
