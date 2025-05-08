@@ -47,6 +47,14 @@ ruff format src/final_scraper.py
 ruff format tests/test_scraper.py
 ```
 
+Also added pre-commit hooks 
+
+Create a .pre-commit-config.yaml file from the README below
+https://github.com/astral-sh/ruff-pre-commit?tab=readme-ov-file
+
+How to add pre commit hook
+https://pre-commit.com/
+
 
 # TODO 
 

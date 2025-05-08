@@ -11,6 +11,7 @@ from src.final_scraper import (
     DEFAULT_FILENAME,
     RealtorData,
     provision_webdriver,
+    scrape_pages,
     write_to_csv,
 )
 from bs4 import BeautifulSoup
@@ -268,4 +269,27 @@ def test_render_page_throws_error_and_logs(logger, mock_time_sleep):
     )
 
 
-# TODO: Write tests for scrape_pages and main
+@patch("src.final_scraper.write_to_csv")
+@patch("src.final_scraper.render_page")
+def test_scrape_pages(mock_render, mock_write_csv):
+    BATCH_SIZE = 2
+    fake_driver = Mock()
+    fake_filename = "fake_file.csv"
+    pages = 4
+    expected_data = [
+        # Each item represents a page
+        ["fake1", "data1"],
+        ["fake2", "data2"],
+        ["fake3", "data3"],
+        ["fake4", "data4"],
+    ]
+
+    mock_render.side_effect = expected_data
+
+    scrape_pages(fake_driver, fake_filename, pages, BATCH_SIZE)
+
+    assert mock_write_csv.call_args_list[0][0][0] == fake_filename
+    assert mock_write_csv.call_args_list[0][0][1] == expected_data[0:2]
+
+    assert mock_write_csv.call_args_list[1][0][0] == fake_filename
+    assert mock_write_csv.call_args_list[1][0][1] == expected_data[2:]
