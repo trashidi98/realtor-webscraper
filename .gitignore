@@ -16,3 +16,7 @@ __pycache__/
 # Environments
 .env
 .venv
+
+# Personal Files
+data_format/
+old/
