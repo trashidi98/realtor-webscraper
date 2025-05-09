@@ -39,7 +39,7 @@ def provision_webdriver():
         driver = Chrome(service=service, options=options)
         LOGGER.info(f"Created driver: {driver}")
 
-    except WebDriverException as e:
+    except (WebDriverException, Exception) as e:
         LOGGER.critical(f"Something went wrong with Webdriver setup: {e}")
         sys.exit()
 
@@ -157,8 +157,8 @@ def collect_realtor_data_from_page(soup):
 def render_page(driver, url):
     try:
         driver.get(url)
-        # Wait for webpage to load, may need to change this depending
-        # On internet speed and hardware specs, this is also because the site is loading in JS and .get() above will not catch that
+        # Wait for webpage to load, may need to change this depending on internet speed and hardware specs
+        # This is also because the site is loading in JS and .get() above will not catch that
         time.sleep(8)
         soup = BeautifulSoup(driver.page_source, "html.parser")
     except (WebDriverException, Exception) as e:

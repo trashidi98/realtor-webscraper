@@ -3,6 +3,7 @@ import pytest
 from src.final_scraper import (
     collect_realtor_data_from_page,
     initialize_csv,
+    main,
     render_page,
     sanitize,
     check_input_pages,
@@ -15,6 +16,7 @@ from src.final_scraper import (
     write_to_csv,
 )
 from bs4 import BeautifulSoup
+from selenium.common.exceptions import WebDriverException
 
 
 @patch("src.final_scraper.Chrome")
@@ -36,6 +38,24 @@ def test_provision_webdriver(mock_service, mock_options, mock_chrome):
 
     assert mock_chrome.call_args[1]["service"] == mock_service_instance
     assert mock_chrome.call_args[1]["options"] == mock_options_instance
+
+
+@patch("src.final_scraper.LOGGER.critical")
+@patch("src.final_scraper.Chrome")
+@patch("src.final_scraper.ChromeOptions")
+@patch("src.final_scraper.ChromeService")
+def test_provision_webdriver_throws_exception_and_exits(
+    mock_service, mock_options, mock_chrome, logger
+):
+    mock_chrome.side_effect = WebDriverException("mock exception msg")
+
+    with pytest.raises(SystemExit):
+        provision_webdriver()
+
+    assert (
+        logger.call_args_list[0][0][0]
+        == "Something went wrong with Webdriver setup: Message: mock exception msg\n"
+    )
 
 
 def test_sanitize():
@@ -293,3 +313,73 @@ def test_scrape_pages(mock_render, mock_write_csv):
 
     assert mock_write_csv.call_args_list[1][0][0] == fake_filename
     assert mock_write_csv.call_args_list[1][0][1] == expected_data[2:]
+
+
+@patch("src.final_scraper.scrape_pages")
+@patch("src.final_scraper.initialize_csv")
+@patch("src.final_scraper.provision_webdriver")
+def test_main_one_arg(mock_prov_driver, mock_init_csv, mock_scrape_pages):
+    with patch("sys.argv", ["scraper_file.py"]):
+        main()
+
+    assert mock_prov_driver.called
+
+    assert mock_init_csv.called
+    assert mock_init_csv.call_args_list[0][0][0] == DEFAULT_FILENAME
+
+    assert mock_scrape_pages.called
+    assert mock_scrape_pages.call_args_list[0][0][0] == mock_prov_driver.return_value
+    assert mock_scrape_pages.call_args_list[0][0][1] == mock_init_csv.return_value
+    assert mock_scrape_pages.call_args_list[0][0][2] == DEFAULT_PAGES_TO_SCRAPE
+
+
+@patch("src.final_scraper.scrape_pages")
+@patch("src.final_scraper.initialize_csv")
+@patch("src.final_scraper.provision_webdriver")
+def test_main_two_arg(mock_prov_driver, mock_init_csv, mock_scrape_pages):
+    with patch("sys.argv", ["scraper_file.py", "3"]):
+        main()
+
+    assert mock_prov_driver.called
+
+    assert mock_init_csv.called
+    assert mock_init_csv.call_args_list[0][0][0] == DEFAULT_FILENAME
+
+    assert mock_scrape_pages.called
+    assert mock_scrape_pages.call_args_list[0][0][0] == mock_prov_driver.return_value
+    assert mock_scrape_pages.call_args_list[0][0][1] == mock_init_csv.return_value
+    assert mock_scrape_pages.call_args_list[0][0][2] == 3
+
+
+@patch("src.final_scraper.scrape_pages")
+@patch("src.final_scraper.initialize_csv")
+@patch("src.final_scraper.provision_webdriver")
+def test_main_three_arg(mock_prov_driver, mock_init_csv, mock_scrape_pages):
+    with patch("sys.argv", ["scraper_file.py", "3", "test_filename"]):
+        main()
+
+    assert mock_prov_driver.called
+
+    assert mock_init_csv.called
+    assert mock_init_csv.call_args_list[0][0][0] == "test_filename"
+
+    assert mock_scrape_pages.called
+    assert mock_scrape_pages.call_args_list[0][0][0] == mock_prov_driver.return_value
+    assert mock_scrape_pages.call_args_list[0][0][1] == mock_init_csv.return_value
+    assert mock_scrape_pages.call_args_list[0][0][2] == 3
+
+
+@patch("src.final_scraper.LOGGER.critical")
+def test_main_too_many_args(logger):
+    with pytest.raises(SystemExit):
+        with patch(
+            "sys.argv", ["scraper_file.py", "3", "test_filename", "too", "many", "args"]
+        ):
+            main()
+
+    assert (
+        logger.call_args_list[0][0][0]
+        == "Looks like more than 3 arguments were supplied.\
+            The first is number of pages to scrape, \
+            second argument should be the name of the file you want to save to e.g myfile, data_file"
+    )
