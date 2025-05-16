@@ -1,10 +1,32 @@
 # This Project 
 
-This is a project I worked on recently, covering a lot of things that I learned as I become a more involved engineer. It's definitely one of the most in-depth **personal projects** I've done because it is fully tested. 
+This project is a webscraper that scrapes the data from a realtor website. The motivation being that I came across this realtor website and thought that the data could be useful (to some businesses in or adjacent to the real estate market), can I scrape it?
 
-I spent a good amount of time thinking about how this could possibly scale. I also worked on making sure the code was as clean as possible, maintanable and most importantly testable.
+I have no intention to sell the data or this scraper it just seemed like an interesting project to work on and was my introduction to webscraping.
 
-Every function I wrote is unit tested with the expected output as well as their respective error handling cases. There are also end-to-end tests that I wrote because it's easy to get "lost in the sauce" in unit testing and forget if the entire app is functioning the way it should.
+I have redacted the website, stored on a local env file, to ensure that this scraper is not utilized on that particular webpage.
+
+Worked on making sure the code was as clean as possible and testable.
+
+There are also end-to-end tests that I wrote because it's easy to get "lost in the sauce" in unit testing and forget if the app is still functioning with each commit.
+
+# How to run 
+
+This is meant to be run as a command line script with two arguments 
+
+```
+python scraper.py 3 realtor_data 
+```
+
+Where 3 indicates the number of webpages of data you want to scrape, and realtor_data is the name of the file you would like to save it to, will be saved as realtor_data.csv, in the directory where this script is called. 
+
+You can also call it with no arguments
+
+```
+python scraper.py
+```
+
+In this case, the script will default back to the values here: https://github.com/trashidi98/realtor-webscraper/blob/09aef9d3a2f64f56522955192fc82e0a2a3ccfab/src/final_scraper.py#L18-L19
 
 
 ## Things left todo 
@@ -27,11 +49,11 @@ Build requirements.txt
 pipreqs . --ignore ./.venv/ --force 
 
 Check and Format
-ruff check src/final_scraper.py
+ruff check src/scraper.py
 
 ruff check tests/test_scraper.py
 
-ruff format src/final_scraper.py
+ruff format src/scraper.py
 
 ruff format tests/test_scraper.py
 ```
