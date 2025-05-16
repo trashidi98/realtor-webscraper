@@ -15,10 +15,10 @@ There are also end-to-end tests that I wrote because it's easy to get "lost in t
 This is meant to be run as a command line script with two arguments 
 
 ```
-python scraper.py 3 realtor_data 
+python scraper.py 3 yourfilename 
 ```
 
-Where 3 indicates the number of webpages of data you want to scrape, and realtor_data is the name of the file you would like to save it to, will be saved as realtor_data.csv, in the directory where this script is called. 
+Where 3 indicates the number of webpages of data you want to scrape, and yourfilename is the name of the file you would like to save it to, will be saved as yourfilename.csv, in the directory where this script is called. 
 
 You can also call it with no arguments
 
